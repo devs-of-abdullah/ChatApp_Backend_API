@@ -1,4 +1,7 @@
-﻿using Business;
+﻿using API;
+using Business;
+using Bussiness;
+using Bussiness.Services;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,8 +17,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.MaxDepth = 64;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,12 +46,30 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.MapHub<ChatHub>("/chatHub");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
+    try
+    {
+        logger.LogInformation("Applying database migrations...");
+        var db = services.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+        logger.LogInformation("Database migration finished.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Database migration failed.");
+        throw;
+    }
+}
 
 app.UseCors("AllowAll");
 

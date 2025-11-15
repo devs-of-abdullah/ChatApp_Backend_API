@@ -1,6 +1,7 @@
 ﻿
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataAccess
 {  
@@ -14,16 +15,28 @@ namespace DataAccess
             _context = context;
         }
 
-        public async Task AddAsync(User user) => await _context.users.AddAsync(user);
+        public async Task AddAsync(User user) => await _context.Users.AddAsync(user);
         public async Task SaveAsync() => await _context.SaveChangesAsync();
 
         public async Task<User?> GetUserByIdAsync(int id)
-            => await _context.users.FindAsync(id);
+            => await _context.Users.FindAsync(id);
 
         public async Task<User?> GetUserByEmailAsync(string email)
-            => await _context.users.FirstOrDefaultAsync(u => u.Email == email);
+            => await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
         public async Task<bool> UserExistsAsync(string email)
-            => await _context.users.AnyAsync(u => u.Email == email);
+            => await _context.Users.AnyAsync(u => u.Email == email);
+        public async Task<bool> RemoveUserAsync(int id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null) return false;
+
+            _context.Users.Remove(user);
+           
+            return true; 
+        }
+       
+
     }
 }

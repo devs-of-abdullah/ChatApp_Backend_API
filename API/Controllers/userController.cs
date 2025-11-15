@@ -64,10 +64,21 @@ namespace API
             }
             return BadRequest(new { message = "Invalid email or password" });
         }
+        [HttpDelete("remove/{id}")]
+        public async Task<IActionResult> RemoveUser(int id)
+        {
+            var deleted = await _userService.RemoveUserAsync(id);
 
-        
+            if (!deleted)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(new { message = "User deleted successfully" });
+        }
+
+
+
     }
 
 
-   
+
 }

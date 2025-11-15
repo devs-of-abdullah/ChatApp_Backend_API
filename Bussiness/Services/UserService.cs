@@ -43,6 +43,13 @@ namespace Business
                 return user;
             return null;
             
-        } 
+        }
+        public async Task<bool> RemoveUserAsync(int id)
+        {
+          var result =   await _userRepository.RemoveUserAsync(id);
+           if(!result) return false;
+            await _userRepository.SaveAsync();
+            return true;
+        }
     }
 }

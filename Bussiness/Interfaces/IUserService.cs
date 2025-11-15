@@ -8,5 +8,7 @@ namespace Business
     {
         Task<User> RegisterUserAsync(string name, string email, string password);
         Task<User?> LoginUserAsync(string email, string password);
+
+        Task<bool> RemoveUserAsync(int id);
     }
 }
