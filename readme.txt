@@ -1,6 +1,3 @@
+this project made with c# and ef there is 3 way of message recieve message group message and send message it made in 4 layers and has auth login 
 
-dotnet ef database drop --project DataAccess --startup-project API
 
-dotnet ef migrations add init --project DataAccess --startup-project API
-
-dotnet ef database update --project DataAccess --startup-project API

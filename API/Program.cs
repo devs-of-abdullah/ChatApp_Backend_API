@@ -12,7 +12,7 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
